@@ -62,17 +62,32 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     final loginResult = await _api.login(username, password);
+    debugPrint('[SPO_DEBUG] LOGIN: 📥 Raw Server Response: ${loginResult['data']}');
 
     if (loginResult['success'] == true) {
-      final authData = loginResult['data']['auth'];
-      debugPrint('[SPO_DEBUG] Saving login result Api, $loginResult');
-      await StorageService.saveAuthTokens(
-        token: authData['token'].toString(),
-        accessToken: authData['access_token'].toString(),
-        userId: int.parse(loginResult['data']['result']['user_id'].toString())
-      );
-      debugPrint('[SPO_DEBUG] Successfully saving login api data');
-      await _pullInitialData();
+      try {
+        final data = loginResult['data'];
+        final authData = data['auth'] ?? {};
+        final resultData = data['result'] ?? {};
+
+        final token = authData['token']?.toString() ?? '';
+        final accessToken = authData['access_token']?.toString() ?? '';
+        final userIdStr = (resultData['user_id'] ?? authData['user_id'])?.toString() ?? '0';
+
+        debugPrint('[SPO_DEBUG] LOGIN: 🔑 Parsed Token: $token');
+        debugPrint('[SPO_DEBUG] LOGIN: 🔑 Parsed UserId: $userIdStr');
+
+        await StorageService.saveAuthTokens(
+          token: token,
+          accessToken: accessToken,
+          userId: int.tryParse(userIdStr) ?? 0,
+        );
+        debugPrint('[SPO_DEBUG] Successfully saving login api data');
+        await _pullInitialData();
+      } catch (e, stack) {
+        debugPrint('[SPO_DEBUG] LOGIN: ❌ Error parsing login data: $e');
+        debugPrint('[SPO_DEBUG] LOGIN: Stack: $stack');
+      }
     } else {
       final offlineSuccess = await _tryOfflineLogin(username, password);
       if (offlineSuccess && mounted) {

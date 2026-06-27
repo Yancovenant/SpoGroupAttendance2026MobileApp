@@ -26,6 +26,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String _userName = "User";
   int _workerCount = 0;
   bool _isSyncing = false;
+  bool _isPushing = false;
 
   // Supervisor & Check-in Logic
   bool _isSupervisor = false;
@@ -94,19 +95,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // Midnight Auto-Reset Logic
   Future<void> _checkTodayAttendanceStatus() async {
     if (_selectedGang == null) return;
-    final prefs = await SharedPreferences.getInstance();
-    final lastCheckInStr = prefs.getString('last_checkin_${_selectedGang!.id}');
 
-    bool isCheckedIn = false;
-    if (lastCheckInStr != null) {
-      final lastCheckIn = DateTime.parse(lastCheckInStr);
-      final now = DateTime.now();
-      final startOfDay = DateTime(now.year, now.month, now.day);
-      if (lastCheckIn.isAfter(startOfDay)) {
-        isCheckedIn = true;
-      }
+    final db = await DatabaseHelper.instance.database;
+    final today = DateTime.now().toUtc().toIso8601String().substring(0, 10);
+
+    final todayRecords = await db.query(
+      'attendance_records',
+      where: 'date LIKE ? AND gang_id = ?',
+      whereArgs: ['$today%', _selectedGang!.id],
+    );
+
+    bool isCheckedIn = todayRecords.isNotEmpty;
+
+    if (mounted) {
+      setState(() {
+        _isCheckedInToday = isCheckedIn;
+      });
     }
-    _isCheckedInToday = isCheckedIn;
+
+    // final prefs = await SharedPreferences.getInstance();
+    // final lastCheckInStr = prefs.getString('last_checkin_${_selectedGang!.id}');
+    //
+    // bool isCheckedIn = false;
+    // if (lastCheckInStr != null) {
+    //   final lastCheckIn = DateTime.parse(lastCheckInStr);
+    //   final now = DateTime.now();
+    //   final startOfDay = DateTime(now.year, now.month, now.day);
+    //   if (lastCheckIn.isAfter(startOfDay)) {
+    //     isCheckedIn = true;
+    //   }
+    // }
+    // _isCheckedInToday = isCheckedIn;
   }
 
   Future<void> _pullData() async {
@@ -124,6 +143,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
     if (mounted) setState(() => _isSyncing = false);
   }
+  // Future<void> _pushData() async {
+  //   HapticFeedback.mediumImpact();
+  //   setState(() => _isPushing = true);
+  //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Mengunggah data absensi ke server...'), backgroundColor: SPOColors.accentGreen, behavior: SnackBarBehavior.floating));
+  //
+  //   final result = await _api.pushAttendance();
+  //   if (result['success'] == true && result['data']?['result'] != null) {
+  //
+  //
+  //     if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Data berhasil di unggah ke server!'), backgroundColor: SPOColors.accentGreen, behavior: SnackBarBehavior.floating));
+  //   } else {
+  //     if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: ${result['message']}'), backgroundColor: Colors.red, behavior: SnackBarBehavior.floating));
+  //   }
+  //   if (mounted) setState(() => _isPushing = false);
+  // }
 
   void _startAttendance() async {
     HapticFeedback.heavyImpact();

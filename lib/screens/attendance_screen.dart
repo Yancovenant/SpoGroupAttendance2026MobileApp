@@ -282,7 +282,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
       // Prepare attendance data
       final attendance = AttendanceRecord(
         recordId: _uuid.v4(),
-        date: DateTime.now().toUtc(),
+        date: DateTime.now(),
         userId: userId,
         gangId: widget.gangId,
         type: _isCheckIn ? 'in' : 'out',
@@ -322,7 +322,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
         final db = await DatabaseHelper.instance.database;
         await db.update(
           'attendance_records',
-          {'syncStatus': SyncStatus.synced.index},
+          {'sync_status': SyncStatus.synced.index},
           where: 'record_id = ?',
           whereArgs: [attendance.recordId],
         );

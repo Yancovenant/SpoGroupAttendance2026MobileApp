@@ -9,7 +9,7 @@ class SPOColors {
   static const Color limeGreen = Color(0xFFA4C639);
 
   // Light Theme Colors
-  static const Color lightBg = Color(0xFFF5F5F5);
+  static const Color lightBg = Color(0xFFF8FAF0);
   static const Color lightCard = Color(0xFFFFFFFF);
   static const Color lightText = Color(0xFF1B5E20);
   static const Color lightTextSecondary = Color(0xFF666666);

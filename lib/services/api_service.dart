@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import './database_helper.dart';
 import '../data/models/attendance_record.dart';
-
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 class ApiService {
@@ -31,6 +31,9 @@ class ApiService {
             options.headers['X-Access-Token'] = tokens['access_token'];
             options.headers['X-User-Id'] = tokens['user_id'].toString();
           }
+
+          debugPrint('[SPO_DEBUG] 🌐 API Request: ${options.method} ${options.uri}');
+          debugPrint('[SPO_DEBUG] 🔑 Headers: ${options.headers}');
 
           handler.next(options);
         },
@@ -111,12 +114,15 @@ class ApiService {
       debugPrint('[SPO_DEBUG] PUSH: Fetched ${entries.length} worker entries.');
 
       // 2. Format exactly as PHP backend expects
+      final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
+      final formattedDate = dateFormat.format(record.date);
+
       final attendancePayload = [{
         'attendance_data': {
           'true_id': record.recordId,
           'user_id': record.userId,
           'gang_id': record.gangId,
-          'attendance_date': record.date.toIso8601String(),
+          'attendance_date': formattedDate,
           'type': record.type,
           'location': '${record.latitude}, ${record.longitude}',
           'entries': jsonEncode(entries), // Must be a JSON string
