@@ -10,8 +10,8 @@ import '../services/storage_service.dart';
 import '../data/models/user.dart';
 import '../data/models/gang.dart';
 import '../main.dart'; // For themeNotifier
-import 'server_config_screen.dart';
-import 'attendance_screen.dart';
+import 'onboard/server_config_screen.dart';
+import 'attendance/attendance_main.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -171,6 +171,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => AttendanceScreen(
+          isCheckIn: true,
           gangId: _selectedGang!.id!,
           gangCode: _selectedGang!.gangCode ?? '',
         ),

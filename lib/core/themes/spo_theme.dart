@@ -26,7 +26,27 @@ class SPOColors {
   static const Color conflictRed = Color(0xFFE53935);
 }
 
+
+// 589A30
+// EE1F15
 ThemeData spoLightTheme = ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: const Color(0xFF589A30),
+    tertiary: const Color(0xFFEE1F15),
+    brightness: Brightness.light,
+  ),
+);
+ThemeData spoDarkTheme = ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: const Color(0xFF589A30),
+    tertiary: const Color(0xFFEE1F15),
+    brightness: Brightness.dark,
+  ),
+);
+
+ThemeData spoLightTheme2 = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
   colorSchemeSeed: SPOColors.primaryGreen,
@@ -50,7 +70,7 @@ ThemeData spoLightTheme = ThemeData(
   ),
 );
 
-ThemeData spoDarkTheme = ThemeData(
+ThemeData spoDarkTheme2 = ThemeData(
   useMaterial3: true,
   brightness: Brightness.dark,
   colorSchemeSeed: SPOColors.primaryGreen,

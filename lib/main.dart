@@ -6,14 +6,16 @@ import 'data/models/employee.dart';
 import 'data/models/gang.dart';
 import 'data/models/attendance_record.dart';
 import 'core/themes/spo_theme.dart';
-import 'screens/splash_screen.dart';
+import 'screens/onboard/splash_screen.dart';
 import 'services/storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   // Lock orientation to Portrait for Field Workers
   await SystemChrome.setPreferredOrientations([
@@ -21,7 +23,7 @@ void main() async {
   ]);
 
   final prefs = await SharedPreferences.getInstance();
-  final isDark = prefs.getBool('isDarkMode') ?? true;
+  final isDark = prefs.getBool('isDarkMode') ?? false;
   themeNotifier.value = isDark ? ThemeMode.dark : ThemeMode.light;
 
   runApp(
