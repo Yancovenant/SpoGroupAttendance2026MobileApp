@@ -24,7 +24,7 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
   Future<void> _launchUrl() async {
-    final Uri url = Uri.parse('https://iantirta.com');
+    final Uri url = Uri.parse('https://spogroup.co.id/');
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     }
@@ -61,11 +61,11 @@ class _AboutScreenState extends State<AboutScreen> {
               const SizedBox(height: 16),
               Text("Dikembangkan oleh", style: Theme.of(context).textTheme.bodyMedium),
               const SizedBox(height: 8),
-              Text("Iantirta Labs", style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+              Text("PT SPOG", style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: _launchUrl,
-                child: Text("iantirta.com", style: TextStyle(color: Theme.of(context).colorScheme.primary, decoration: TextDecoration.underline, fontWeight: FontWeight.w600)),
+                child: Text("https://spogroup.co.id/", style: TextStyle(color: Theme.of(context).colorScheme.primary, decoration: TextDecoration.underline, fontWeight: FontWeight.w600)),
               ),
               const SizedBox(height: 48),
               Text("Versi $_version", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey)),
