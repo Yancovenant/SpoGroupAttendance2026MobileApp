@@ -85,26 +85,13 @@ class _GangSelectionSheetState extends State<GangSelectionSheet> {
         });
 
         return Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
           child: Column(
             children: [
-              // Drag Handle
-              Container(
-                margin: const EdgeInsets.only(top: 12, bottom: 12),
-                width: 40, height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Pilih Gang", style: Theme.of(context).textTheme.titleLarge),
+                  child: Text("Pilih Gang", style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold)),
                 ),
               ),
               Padding(
@@ -115,7 +102,8 @@ class _GangSelectionSheetState extends State<GangSelectionSheet> {
                   decoration: InputDecoration(
                     hintText: "Cari kode atau nama gang...",
                     prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(12)),
                     filled: true,
                   ),
                 ),

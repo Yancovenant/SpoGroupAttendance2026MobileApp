@@ -40,11 +40,18 @@ class _AboutScreenState extends State<AboutScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+
               Container(
-                width: 100, height: 100,
-                decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer, borderRadius: BorderRadius.circular(24)),
-                child: Icon(Icons.eco_outlined, size: 60, color: Theme.of(context).colorScheme.onPrimaryContainer),
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24)),
+                child: Image.asset(
+                  'assets/logo_light.jpg',
+                  width: 100,
+                  height: 100,
+                ),
               ),
+
               const SizedBox(height: 24),
               Text("SPO Group Attendance", style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold), textAlign: TextAlign.center),
               const SizedBox(height: 8),

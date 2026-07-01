@@ -56,6 +56,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
   List<Employee> _displayedWorkers = [];
   String _searchQuery = '';
   List<int> _selectedWorkerIds = [];
+  bool _selectAll = false;
 
   bool _isSaving = false;
   bool _isPushing = false;
@@ -156,6 +157,19 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
         _filteredWorkers = _allWorkers
             .where((w) => w.name.toLowerCase().contains(query.toLowerCase()))
             .toList();
+      }
+      _resetPagination();
+    });
+  }
+  void _onSelectAll(bool? isSelectAll) {
+    final isSelectingAll = isSelectAll ?? false;
+    setState(() {
+      _selectAll = isSelectingAll;
+
+      if (isSelectingAll) {
+        _selectedWorkerIds = _allWorkers.map((emp) => emp.id!).toList();
+      } else {
+        _selectedWorkerIds = [];
       }
       _resetPagination();
     });
@@ -314,13 +328,17 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
         : Theme.of(context).colorScheme.tertiary;
 
     final bool stateButtonReady = !_isSaving && !_isPushing && _groupPhoto != null && _gpsLocation != null && _selectedWorkerIds.isNotEmpty;
+    final IconData icon = widget.isCheckIn ? Icons.fingerprint : Icons.exit_to_app;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: accentColor,
-        foregroundColor: Colors.white,
-        leading: IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
-        title: Text("Absensi ${widget.isCheckIn ? "Masuk" : "Pulang"} - ${widget.gangCode}"),
+        //backgroundColor: accentColor,
+        //foregroundColor: Colors.white,
+        leading: Icon(icon),
+        title: Text("Absensi ${widget.isCheckIn ? "Masuk" : "Pulang"}"),
+        actions: [
+          IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
+        ],
       ),
       body: CustomScrollView(
         controller: _scrollController,
@@ -329,89 +347,127 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
           // 1. HEADER (Clock & Date)
           SliverToBoxAdapter(
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              color: accentColor.withOpacity(0.05),
-              child: Column(
-                children: [
-                  Text(
-                    _currentTime,
-                    style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold, color: accentColor),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _currentDate,
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
-                  ),
-                ],
+              padding: EdgeInsetsGeometry.all(12),
+              child: Container(
+                padding: EdgeInsetsGeometry.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      _currentTime,
+                      style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold,),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _currentDate,
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
+                    ),
+                    const SizedBox(height:24),
+                    Row(
+                      spacing: 12,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.surface,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.12))),
+                            child: Text(widget.isCheckIn ? "Masuk" : "Pulang"),
+                          ),
+                        ),
+                        Expanded(child:Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.12))),
+                          child: Text("GANG - ${widget.gangCode}"),
+                        ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-
+          
           // 2. PHOTO & GPS STATUS
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Photo Section
-                  Text("Foto Kelompok (Wajib)", style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: _isTakingPhoto ? null : _takePhoto,
-                    child: Container(
-                      height: 200,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.black12,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: _groupPhoto == null ? Colors.redAccent : accentColor, width: 2),
-                        image: _groupPhoto != null ? DecorationImage(image: FileImage(_groupPhoto!), fit: BoxFit.cover) : null,
-                      ),
-                      child: _groupPhoto == null
-                          ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(_isTakingPhoto ? Icons.hourglass_empty : Icons.camera_alt, size: 48, color: Colors.grey),
-                            const SizedBox(height: 8),
-                            Text(_isTakingPhoto ? "Mengambil..." : "Tap untuk ambil foto", style: const TextStyle(color: Colors.grey)),
-                          ],
+            child: Container(
+              padding: const EdgeInsetsGeometry.all(12),
+              child: Container(
+                padding: const EdgeInsetsGeometry.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                ),
+                child: Column(
+                  children: [
+                    Text("Foto Kelompok (Wajib)", style: Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    GestureDetector(
+                      onTap: _isTakingPhoto ? null : _takePhoto,
+                      child: Container(
+                        height: 200,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: _groupPhoto == null ? Colors.redAccent : accentColor, width: 1),
+                          image: _groupPhoto != null ? DecorationImage(image: FileImage(_groupPhoto!), fit: BoxFit.cover) : null,
                         ),
-                      )
-                          : null,
+                        child: _groupPhoto == null
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(_isTakingPhoto ? Icons.hourglass_empty : Icons.camera_alt, size: 48, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
+                                    const SizedBox(height: 8),
+                                    Text(_isTakingPhoto ? "Mengambil..." : "Tap untuk ambil foto", style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7))),
+                                  ],
+                                ),
+                              )
+                            : null,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // GPS Auto-Fetch Status
-                  Row(
-                    children: [
-                      Icon(_isFetchingGps ? Icons.gps_not_fixed : Icons.gps_fixed, color: _isFetchingGps ? Colors.orange : SPOColors.accentGreen),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          _isFetchingGps ? "Mencari sinyal GPS..." : "GPS Terkunci: $_gpsLocation",
-                          style: TextStyle(color: _isFetchingGps ? Colors.orange : SPOColors.accentGreen, fontWeight: FontWeight.w600),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Icon(_isFetchingGps ? Icons.gps_not_fixed : Icons.gps_fixed, color: _isFetchingGps ? Colors.orange : SPOColors.accentGreen),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _isFetchingGps ? "Mencari sinyal GPS..." : "GPS Terkunci: $_gpsLocation",
+                            style: TextStyle(color: _isFetchingGps ? Colors.orange : SPOColors.accentGreen, fontWeight: FontWeight.w600),
+                          ),
                         ),
-                      ),
-                      if (_isFetchingGps) const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
-                    ],
-                  ),
-                ],
+                        if (_isFetchingGps) const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
 
           // 3. SEARCH BAR
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Container(
+              padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
               child: TextField(
                 decoration: InputDecoration(
                   hintText: "Cari nama pekerja...",
                   prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
                   filled: true,
                 ),
                 onChanged: _onSearchChanged,
@@ -421,13 +477,40 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
 
           // 4. WORKER LIST HEADER
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Container(
+              //padding: EdgeInsetsGeometry.all(12),
+              child: Column(
                 children: [
-                  Text("Daftar Pekerja (${_filteredWorkers.length})", style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold)),
-                  Text("Dipilih: ${_selectedWorkerIds.length}", style: TextStyle(color: accentColor, fontWeight: FontWeight.bold)),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {},
+                          child: Padding(
+                            padding: EdgeInsets.zero,
+                            child: Row( children: [
+                              Checkbox(
+                                value: _selectAll,
+                                onChanged: _onSelectAll,
+                              ),
+                              Expanded(child:Text("Pilih semua"),),
+                            ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Daftar Pekerja (${_filteredWorkers.length})", style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold)),
+                        Text("Dipilih: ${_selectedWorkerIds.length}", style: TextStyle(color: accentColor, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

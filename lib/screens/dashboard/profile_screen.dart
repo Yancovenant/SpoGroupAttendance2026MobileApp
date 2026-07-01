@@ -70,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Material(
                 color: Theme.of(context).colorScheme.surfaceContainerLowest,
                 borderRadius: BorderRadius.circular(24),
-                elevation: 1,
+                elevation: 0,
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsetsGeometry.all(12),
@@ -106,7 +106,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: Theme.of(context).colorScheme.surfaceContainerLowest,
                 borderRadius: BorderRadius.circular(24),
                 clipBehavior: Clip.antiAlias,
-                elevation: 1,
+                elevation: 0,
                 child: Column(
                   children: [
                     ListTile(
@@ -156,6 +156,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-
 }
 

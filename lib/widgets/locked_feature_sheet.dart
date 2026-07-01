@@ -14,26 +14,11 @@ class LockedFeatureSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
-      ),
+
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Drag Handle
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 24),
 
-          // 🚀 Changed Icon: Lock + Clock represents "Coming Soon"
           Icon(
             Icons.lock_clock_rounded,
             size: 64,
@@ -41,7 +26,6 @@ class LockedFeatureSheet extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // 🚀 Changed Title
           Text(
             "Segera Hadir",
             style: TextStyle(

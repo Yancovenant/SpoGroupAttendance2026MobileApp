@@ -242,7 +242,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void _showGangSelectionSheet() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      showDragHandle: true,
       isScrollControlled: true,
       builder: (context) => GangSelectionSheet(
         allGangs: _availableGangs,

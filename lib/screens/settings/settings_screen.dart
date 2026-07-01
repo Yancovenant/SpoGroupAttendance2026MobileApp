@@ -16,7 +16,7 @@ class SettingsScreen extends StatelessWidget {
           color: Theme.of(context).colorScheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(24),
           clipBehavior: Clip.antiAlias,
-          elevation: 1,
+          elevation: 0,
           child: Column(
             children: [
               ListTile(

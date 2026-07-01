@@ -158,15 +158,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: InkWell(
-        onTap: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => HistoryDetailScreen(record: record),
-            ),
-          );
-          if (result == true) _refresh(); // Refresh list if edited or deleted
-        },
+        // onTap: () async {
+        //   final result = await Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (_) => HistoryDetailScreen(record: record),
+        //     ),
+        //   );
+        //   if (result == true) _refresh(); // Refresh list if edited or deleted
+        // },
+        onTap: () {},
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
